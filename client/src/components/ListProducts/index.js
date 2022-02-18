@@ -5,7 +5,7 @@ import list4 from '../../assets/img/list-4.png'
 
 import { Link } from 'react-router-dom';
 
-export default function ListProducts(props) {
+export default function ListProducts() {
     return (
         <div className="lg:mx-20">
             <h2 className="text-4xl font-black text-blood mt-16 mb-12">Let's Order</h2>

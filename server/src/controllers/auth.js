@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         });
         const { error } = schema.validate(req.body);
         if (error) {
-            res.status(400).send({
+            res.status(401).send({
                 status: 'error',
                 message: error.details[0].message
             });
@@ -31,7 +31,7 @@ exports.register = async (req, res) => {
             }
         });
         if (user) {
-            res.status(400).send({
+            res.status(401).send({
                 status: 'error',
                 message: 'User already exists'
             });
@@ -79,7 +79,7 @@ exports.login = async (req, res) => {
         });
         const { error } = schema.validate(req.body);
         if (error) {
-            res.status(400).send({
+            res.status(401).send({
                 status: 'error',
                 message: error.details[0].message
             });
@@ -92,7 +92,7 @@ exports.login = async (req, res) => {
             }
         });
         if (!user) {
-            res.status(400).send({
+            res.status(401).send({
                 status: 'error',
                 message: 'Email or password is incorrect'
             });
@@ -101,7 +101,7 @@ exports.login = async (req, res) => {
         // check if password is correct
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) {
-            res.status(400).send({
+            res.status(401).send({
                 status: 'error',
                 message: 'Email or password is incorrect'
             });
@@ -117,9 +117,37 @@ exports.login = async (req, res) => {
         res.send({
             status: 'success',
             data: {
+                id: user.id,
                 fullName: user.fullName,
                 email: user.email,
                 token
+            }
+        });
+    } catch (error) {
+        res.status(500).send({
+            status: 'error',
+            message: error.message
+        });
+    }
+};
+
+// Check auth
+exports.checkAuth = async (req, res) => {
+    try {
+        // check if user is logged in
+        if (!req.user) {
+            res.status(401).send({
+                status: 'error',
+                message: 'Unauthorized'
+            });
+            return;
+        }
+        res.send({
+            status: 'success',
+            data: {
+                id: req.user.id,
+                fullName: req.user.fullName,
+                email: req.user.email
             }
         });
     } catch (error) {

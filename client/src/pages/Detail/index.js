@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 
 import product from '../../assets/img/product-big.png'
 import toping1 from '../../assets/img/toping-1.png'
@@ -11,10 +13,11 @@ import toping6 from '../../assets/img/toping-6.png'
 import toping7 from '../../assets/img/toping-7.png'
 import toping8 from '../../assets/img/toping-8.png'
 
-export default function Detail(props) {
+export default function Detail() {
     const navigate = useNavigate()
+    const [state, dispatch] = useContext(UserContext);
     useEffect(() => {
-        if (!props.isLogin) {
+        if (!state.isLogin) {
             navigate('/?a=login')
         }
     })

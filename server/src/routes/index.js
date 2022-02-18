@@ -21,7 +21,7 @@ const { getOrders, getOrderById, getOrdersByTransactionId, getOrdersByUserId, ad
 // order topping pivot
 const { addOrderTopping, deleteOrderTopping } = require('../controllers/orderTopping')
 // auth
-const { login, register } = require('../controllers/auth')
+const { login, register, checkAuth } = require('../controllers/auth')
 
 // Routes
 
@@ -64,5 +64,6 @@ router.delete('/order-toppings/', deleteOrderTopping)
 // auth
 router.post('/login', login)
 router.post('/register', register)
+router.get('/check-auth', auth, checkAuth)
 
 module.exports = router

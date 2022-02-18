@@ -9,7 +9,7 @@ function useQuery() {
     return useMemo(() => new URLSearchParams(search), [search]);
 }
 
-export default function ModalAuth(props) {
+export default function ModalAuth() {
     const location = useLocation();
     const query = useQuery();
     return (
@@ -21,14 +21,14 @@ export default function ModalAuth(props) {
                 style={{
                     content: {
                         backgroundColor: '#fff',
-                        top: '50%',
+                        top: '33%',
                         bottom: 'auto',
                         left: '50%',
                         right: 'auto',
                     }
                 }}
             >
-                <Login isLogin={props.isLogin} setIsLogin={props.setIsLogin}/>
+                <Login />
             </Modal>
             <Modal
                 isOpen={query.get('a') === 'register'}
@@ -37,14 +37,14 @@ export default function ModalAuth(props) {
                 style={{
                     content: {
                         backgroundColor: '#fff',
-                        top: '50%',
+                        top: '33%',
                         bottom: 'auto',
                         left: '50%',
                         right: 'auto',
                     }
                 }}
             >
-                <Register isLogin={props.isLogin} setIsLogin={props.setIsLogin}/>
+                <Register />
             </Modal>
         </>
     )

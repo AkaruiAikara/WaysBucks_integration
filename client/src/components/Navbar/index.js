@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useContext } from 'react'
+import { UserContext } from '../../context/UserContext'
 
 import Dropdown from '../Dropdown'
 import logo from '../../assets/img/logo.png';
 import avatar from '../../assets/img/avatar.png';
 import shopbasket from '../../assets/img/shopbasket.png';
 
-export default function Navbar(props) {
+export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
+    const [state, dispatch] = useContext(UserContext);
     const location = useLocation()
     return (
         <nav className="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-600 my-5">
@@ -15,7 +18,7 @@ export default function Navbar(props) {
                 <Link to="/">
                     <img src={logo} alt="logo" />
                 </Link>
-                {props.isLogin ? (
+                {state.isLogin ? (
                     <ul className="flex justify-end items-center space-x-12">
                         <li>
                             <Link to="cart">
@@ -28,7 +31,7 @@ export default function Navbar(props) {
                                     <img src={avatar} alt="avatar" />
                                 </button>
                                 {isOpen ? (
-                                    <Dropdown setIsLogin={props.setIsLogin} />
+                                    <Dropdown />
                                 ) : null}
                             </div>
                         </li>

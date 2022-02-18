@@ -1,10 +1,20 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 
 import cartproduct from '../../assets/img/cart-product.png'
 import bin from '../../assets/img/bin.svg'
 import invoice from '../../assets/img/invoice.svg'
 
 export default function Cart() {
+    const navigate = useNavigate()
+    const [state, dispatch] = useContext(UserContext);
+    useEffect(() => {
+        if (!state.isLogin) {
+            navigate('/?a=login')
+        }
+    })
     return (
         <div className="mx-5 lg:mx-20">
             <div className="flex flex-col lg:flex-row gap-24 justify-center">

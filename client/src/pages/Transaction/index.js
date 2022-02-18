@@ -1,7 +1,19 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
+
 import success from '../../assets/img/success.svg'
 import cancel from '../../assets/img/cancel.svg'
 
 export default function Transaction() {
+    const navigate = useNavigate()
+    const [state, dispatch] = useContext(UserContext);
+    useEffect(() => {
+        if (!state.user.isAdmin) {
+            navigate('/')
+        }
+    })
     return (
         <div className="mx-10 lg:mx-20">
             <h1 className="text-3xl text-blood font-bold my-12">Income Transaction</h1>

@@ -197,7 +197,7 @@ exports.deleteUser = (req, res) => {
                 id: req.params.id
             }
         }).then((user) => {
-            if (user == 0) {
+            if (!user) {
                 res.status(404).send({
                     status: 'error',
                     message: 'User not found'

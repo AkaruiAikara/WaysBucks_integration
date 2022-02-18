@@ -1,6 +1,8 @@
 import './App.css';
-import { useState } from 'react';
-import { Routes, Route } from "react-router-dom";
+import { API, setAuthToken } from './config/api';
+import { useContext, useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { UserContext } from './context/UserContext';
 import Modal from 'react-modal';
 
 import Navbar from './components/Navbar';
@@ -15,23 +17,69 @@ import AddTopping from './pages/AddToping';
 
 Modal.setAppElement('#root');
 
+// If token is in localStorage, set it as default header
+if (localStorage.getItem('token')) {
+    setAuthToken(localStorage.getItem('token'));
+}
+
 export default function App() {
-  const [isLogin, setIsLogin] = useState(() => {
-    const token = localStorage.getItem('token');
-    return token ? true : false;
-  });
+  const navigate = useNavigate();
+  const [state, dispatch] = useContext(UserContext);
+  // Redirect Auth
+  useEffect(() => {
+    if (!state.isLogin) {
+      navigate('/?a=login');
+    } else {
+      if (state.user.isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [state]);
+
+  // Create function for check user token
+  const checkToken = () => {
+    if (localStorage.getItem('token')) {
+      API.get('/check-auth')
+        .then(res => {
+          // Get user data
+          let payload = res.data.data;
+          // Get token from localStorage and set it to payload
+          payload.token = localStorage.getItem('token');
+          dispatch({
+            type: 'LOGIN',
+            payload,
+          });
+        })
+        .catch(err => {
+          localStorage.removeItem('token');
+          dispatch({
+            type: 'LOGOUT'
+          });
+        });
+    } else {
+      dispatch({
+        type: 'LOGOUT'
+      });
+    }
+  };
+
+  useEffect(() => {
+    checkToken();
+  }, []);
   return (
     <div className="container mx-auto my-6">
-      <ModalAuth isLogin={isLogin} setIsLogin={setIsLogin} />
-      <Navbar isLogin={isLogin} setIsLogin={setIsLogin} />
+      <ModalAuth />
+      <Navbar />
       <Routes>
-        <Route path="/" element={<Home isLogin={isLogin} setIsLogin={setIsLogin}/>} />
-        <Route path="detail" element={<Detail isLogin={isLogin} setIsLogin={setIsLogin}/>} />
-        <Route path="cart" element={<Cart isLogin={isLogin} setIsLogin={setIsLogin}/>} />
-        <Route path="transaction" element={<Transaction isLogin={isLogin} setIsLogin={setIsLogin}/>} />
-        <Route path="profile" element={<Profile isLogin={isLogin} setIsLogin={setIsLogin}/>} />
-        <Route path="add-product" element={<AddProduct isLogin={isLogin} setIsLogin={setIsLogin}/>} />
-        <Route path="add-topping" element={<AddTopping isLogin={isLogin} setIsLogin={setIsLogin}/>} />
+        <Route path="/" element={<Home />} />
+        <Route path="detail" element={<Detail />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="transaction" element={<Transaction />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="add-product" element={<AddProduct />} />
+        <Route path="add-topping" element={<AddTopping />} />
       </Routes>
     </div>
   )

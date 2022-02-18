@@ -4,13 +4,15 @@ import { BrowserRouter } from "react-router-dom";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'flowbite';
+import { UserContextProvider } from './context/UserContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <UserContextProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </UserContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

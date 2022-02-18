@@ -1,9 +1,21 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
+
 import profile from '../../assets/img/profile.png';
 import product from '../../assets/img/product-small.png';
 import logo from '../../assets/img/logo-small.png';
 import qrcode from '../../assets/img/qrcode.png';
 
 export default function Profile() {
+    const navigate = useNavigate()
+    const [state, dispatch] = useContext(UserContext);
+    useEffect(() => {
+        if (!state.isLogin) {
+            navigate('/?a=login')
+        }
+    })
     return (
         <div className="mx-10 lg:mx-20">
         <div className="flex flex-col lg:flex-row">
