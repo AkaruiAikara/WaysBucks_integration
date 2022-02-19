@@ -1,31 +1,19 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { UserContext } from "../../context/UserContext";
-
 import toping from "../../assets/img/toping-big.png";
 import attachment from "../../assets/img/attachment.svg";
 
-export default function AddToping() {
-  const navigate = useNavigate();
-  const [state, dispatch] = useContext(UserContext);
-  useEffect(() => {
-    if (!state.user.isAdmin) {
-      navigate("/");
-    }
-  });
+export default function AddTopping() {
   return (
-    <div className="mx-10 lg:mx-20">
-      <div className="flex flex-col lg:flex-row gap-36 mt-20">
+    <>
+      <div className="flex flex-col lg:flex-row gap-36">
         <div className="flex-grow">
-          <h2 className="text-3xl text-blood font-bold">Toping</h2>
+          <h2 className="text-3xl text-blood font-bold">Add Topping</h2>
           <div className="space-y-8 mt-12">
             <input
               type="text"
               name="name"
               id="name"
               className="bg-smooth border-2 border-blood text-gray-900 text-sm rounded-md focus:ring-red-800 focus:border-red-800 block w-full p-4 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-              placeholder="Name Toping"
+              placeholder="Name Topping"
               required
             />
             <input
@@ -45,19 +33,18 @@ export default function AddToping() {
                 name="name"
                 id="name"
                 className="bg-smooth border-2 border-blood text-gray-900 text-sm rounded-md focus:ring-red-800 focus:border-red-800 block w-full p-4 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white file:hidden"
-                placeholder="Name Toping"
                 required
               />
             </div>
           </div>
           <div className="flex justify-center">
             <button className="text-center text-white bg-blood w-[90%] py-2.5 mt-20 rounded-md hover:bg-red-600 focus:bg-red-900 focus:ring-4 focus:ring-red-200">
-              Add Toping
+              Add Topping
             </button>
           </div>
         </div>
         <img src={toping} alt="" />
       </div>
-    </div>
+    </>
   );
 }

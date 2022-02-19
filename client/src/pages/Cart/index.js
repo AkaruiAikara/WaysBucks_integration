@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 
@@ -82,13 +82,10 @@ export default function Cart() {
                 <span className="text-lg text-blood font-bold">Rp. 69.000</span>
               </div>
             </div>
-            <Link
-              to="/transaction"
-              className="border-2 border-blood bg-smooth text-center justify-center py-3 px-8 rounded-md whitespace-nowrap"
-            >
+            <div className="border-2 border-blood bg-smooth text-center justify-center py-3 px-8 rounded-md whitespace-nowrap">
               <img className="mx-auto p-2" src={invoice} alt="" />
               <h5 className="text-md text-blood">Attache of Transaction</h5>
-            </Link>
+            </div>
           </div>
         </div>
         <div className="text-center">

@@ -46,7 +46,7 @@ export default function Login() {
         });
         // Redirect to home page or admin page
         if (res.data.data.isAdmin) {
-          navigate("/admin");
+          navigate("/dashboard/index");
         } else {
           navigate("/");
         }

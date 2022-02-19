@@ -119,6 +119,7 @@ exports.login = async (req, res) => {
       {
         id: user.id,
         email: user.email,
+        isAdmin: user.isAdmin,
       },
       process.env.JWT_SECRET,
       {
@@ -131,6 +132,7 @@ exports.login = async (req, res) => {
         id: user.id,
         fullName: user.fullName,
         email: user.email,
+        isAdmin: user.isAdmin,
         token,
       },
     });
@@ -159,6 +161,7 @@ exports.checkAuth = async (req, res) => {
         id: req.user.id,
         fullName: req.user.fullName,
         email: req.user.email,
+        isAdmin: req.user.isAdmin,
       },
     });
   } catch (error) {

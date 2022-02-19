@@ -4,7 +4,6 @@ const { User, Profile, Order, Transaction, Product } = require("../../models");
 const Joi = require("joi");
 // import bcrypt
 const bcrypt = require("bcrypt");
-const user = require("../../models/user");
 // generate salt
 const salt = bcrypt.genSaltSync(10);
 

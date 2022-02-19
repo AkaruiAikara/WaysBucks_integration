@@ -1,24 +1,12 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { UserContext } from "../../context/UserContext";
-
 import product from "../../assets/img/product-big.png";
 import attachment from "../../assets/img/attachment.svg";
 
 export default function AddProduct() {
-  const navigate = useNavigate();
-  const [state, dispatch] = useContext(UserContext);
-  useEffect(() => {
-    if (!state.user.isAdmin) {
-      navigate("/");
-    }
-  });
   return (
-    <div className="mx-10 lg:mx-20">
-      <div className="flex flex-col lg:flex-row gap-36 mt-20">
+    <>
+      <div className="flex flex-col lg:flex-row gap-36">
         <div className="flex-grow">
-          <h2 className="text-3xl text-blood font-bold">Product</h2>
+          <h2 className="text-3xl text-blood font-bold">Add Product</h2>
           <div className="space-y-8 mt-12">
             <input
               type="text"
@@ -58,6 +46,6 @@ export default function AddProduct() {
         </div>
         <img src={product} alt="" />
       </div>
-    </div>
+    </>
   );
 }
