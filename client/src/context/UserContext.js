@@ -4,38 +4,38 @@ export const UserContext = createContext();
 
 // Define the initial state
 const initialState = {
-    isLogin: false,
-    user: {},
+  isLogin: false,
+  user: {},
 };
 
 // Define the reducer function
 const reducer = (state, action) => {
-    const { type, payload } = action;
-    switch (type) {
-        case "LOGIN":
-            localStorage.setItem("token", payload.token);
-            return {
-                ...state,
-                isLogin: true,
-                user: payload,
-            };
-        case "LOGOUT":
-            localStorage.removeItem("token");
-            return {
-                ...state,
-                isLogin: false,
-                user: {},
-            };
-        default:
-            throw new Error();
-    }
+  const { type, payload } = action;
+  switch (type) {
+    case "LOGIN":
+      localStorage.setItem("token", payload.token);
+      return {
+        ...state,
+        isLogin: true,
+        user: payload,
+      };
+    case "LOGOUT":
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        isLogin: false,
+        user: {},
+      };
+    default:
+      throw new Error();
+  }
 };
 
 export const UserContextProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(reducer, initialState)
-    return (
-        <UserContext.Provider value={[state, dispatch]}>
-            {children}
-        </UserContext.Provider>
-    )
-}
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <UserContext.Provider value={[state, dispatch]}>
+      {children}
+    </UserContext.Provider>
+  );
+};

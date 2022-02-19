@@ -1,25 +1,25 @@
-import './App.css';
-import { API, setAuthToken } from './config/api';
-import { useContext, useEffect, useState } from 'react';
+import "./App.css";
+import { API, setAuthToken } from "./config/api";
+import { useContext, useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { UserContext } from './context/UserContext';
-import Modal from 'react-modal';
+import { UserContext } from "./context/UserContext";
+import Modal from "react-modal";
 
-import Navbar from './components/Navbar';
-import ModalAuth from './components/ModalAuth';
-import Home from './pages/Home';
-import Detail from './pages/Detail';
-import Cart from './pages/Cart';
-import Transaction from './pages/Transaction';
-import Profile from './pages/Profile';
-import AddProduct from './pages/AddProduct';
-import AddTopping from './pages/AddToping';
+import Navbar from "./components/Navbar";
+import ModalAuth from "./components/ModalAuth";
+import Home from "./pages/Home";
+import Detail from "./pages/Detail";
+import Cart from "./pages/Cart";
+import Transaction from "./pages/Transaction";
+import Profile from "./pages/Profile";
+import AddProduct from "./pages/AddProduct";
+import AddTopping from "./pages/AddToping";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 // If token is in localStorage, set it as default header
-if (localStorage.getItem('token')) {
-    setAuthToken(localStorage.getItem('token'));
+if (localStorage.getItem("token")) {
+  setAuthToken(localStorage.getItem("token"));
 }
 
 export default function App() {
@@ -28,39 +28,39 @@ export default function App() {
   // Redirect Auth
   useEffect(() => {
     if (!state.isLogin) {
-      navigate('/?a=login');
+      navigate("/?a=login");
     } else {
       if (state.user.isAdmin) {
-        navigate('/admin');
+        navigate("/admin");
       } else {
-        navigate('/');
+        navigate("/");
       }
     }
   }, [state]);
 
   // Create function for check user token
   const checkToken = () => {
-    if (localStorage.getItem('token')) {
-      API.get('/check-auth')
-        .then(res => {
+    if (localStorage.getItem("token")) {
+      API.get("/check-auth")
+        .then((res) => {
           // Get user data
           let payload = res.data.data;
           // Get token from localStorage and set it to payload
-          payload.token = localStorage.getItem('token');
+          payload.token = localStorage.getItem("token");
           dispatch({
-            type: 'LOGIN',
+            type: "LOGIN",
             payload,
           });
         })
-        .catch(err => {
-          localStorage.removeItem('token');
+        .catch((err) => {
+          localStorage.removeItem("token");
           dispatch({
-            type: 'LOGOUT'
+            type: "LOGOUT",
           });
         });
     } else {
       dispatch({
-        type: 'LOGOUT'
+        type: "LOGOUT",
       });
     }
   };
@@ -82,5 +82,5 @@ export default function App() {
         <Route path="add-topping" element={<AddTopping />} />
       </Routes>
     </div>
-  )
+  );
 }

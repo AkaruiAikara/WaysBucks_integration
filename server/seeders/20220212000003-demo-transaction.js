@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add seed commands here.
      *
@@ -10,26 +10,34 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
+     */
     // create loop to generate 500 transactions
     for (let i = 0; i < 500; i++) {
       // create transaction
-      await queryInterface.bulkInsert('transactions', [{
-        userId: Math.floor(Math.random() * 100) + 1,
-        status: ['Pending', 'Success', 'Failed'][Math.floor(Math.random() * 3)],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }], {});
+      await queryInterface.bulkInsert(
+        "transactions",
+        [
+          {
+            userId: Math.floor(Math.random() * 100) + 1,
+            status: ["Pending", "Success", "Failed"][
+              Math.floor(Math.random() * 3)
+            ],
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
+        {}
+      );
     }
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add commands to revert seed here.
      *
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete('Transactions', null, {});
-  }
+    await queryInterface.bulkDelete("Transactions", null, {});
+  },
 };

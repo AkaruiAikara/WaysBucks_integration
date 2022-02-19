@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
     /**
@@ -12,35 +10,38 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Order.belongsTo(models.User, {
-        foreignKeyL: 'userId',
-        as: 'user'
-      })
+        foreignKeyL: "userId",
+        as: "user",
+      });
       Order.belongsTo(models.Transaction, {
-        foreignKey: 'transactionId',
-        as: 'transaction'
-      })
+        foreignKey: "transactionId",
+        as: "transaction",
+      });
       Order.belongsTo(models.Product, {
-        foreignKey: 'productId',
-        as: 'product'
-      })
+        foreignKey: "productId",
+        as: "product",
+      });
       Order.belongsToMany(models.Topping, {
-        as: 'toppings',
+        as: "toppings",
         through: {
-          model: 'OrderTopping',
-          as: 'orderToppings'
+          model: "OrderTopping",
+          as: "orderToppings",
         },
-        foreignKey: 'orderId'
-        })
+        foreignKey: "orderId",
+      });
     }
   }
-  Order.init({
-    userId: DataTypes.INTEGER,
-    transactionId: DataTypes.INTEGER,
-    productId: DataTypes.INTEGER,
-    qty: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Order',
-  });
+  Order.init(
+    {
+      userId: DataTypes.INTEGER,
+      transactionId: DataTypes.INTEGER,
+      productId: DataTypes.INTEGER,
+      qty: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "Order",
+    }
+  );
   return Order;
 };
