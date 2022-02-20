@@ -40,7 +40,7 @@ export default function App() {
         navigate("/");
       }
     }
-  }, [state]);
+  }, [state.isLogin]);
 
   // Create function for check user token
   const checkToken = () => {
@@ -68,7 +68,6 @@ export default function App() {
       });
     }
   };
-
   useEffect(() => {
     checkToken();
   }, []);

@@ -16,6 +16,8 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/user");
+// profile
+const { addProfile, updateProfile } = require("../controllers/profile");
 // product
 const {
   getProducts,
@@ -67,6 +69,9 @@ router.get("/users/:id", getUserById);
 router.post("/users", addUser);
 router.patch("/users/:id", uploadFile("image"), updateUser);
 router.delete("/users/:id", deleteUser);
+// profile
+router.post("/profiles", uploadFile("image"), addProfile);
+router.patch("/profiles/:userId", uploadFile("image"), updateProfile);
 // product
 router.get("/products", getProducts);
 router.get("/products/:id", getProductById);

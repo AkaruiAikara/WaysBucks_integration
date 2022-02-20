@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
+import { API } from "../../config/api";
 
 import Dropdown from "../Dropdown";
 import logo from "../../assets/img/logo.png";
-import avatar from "../../assets/img/avatar.png";
+import avatar from "../../assets/img/avatar.jpg";
 import shopbasket from "../../assets/img/shopbasket.png";
 
 export default function Navbar() {
@@ -34,7 +35,11 @@ export default function Navbar() {
                     });
                   }}
                 >
-                  <img src={avatar} alt="avatar" />
+                  <img
+                    className="w-[60px] h-[60px] object-cover rounded-full border-2 border-blood"
+                    src={state.user.image ?? avatar}
+                    alt="avatar"
+                  />
                 </button>
                 {isOpen ? <Dropdown /> : null}
               </div>

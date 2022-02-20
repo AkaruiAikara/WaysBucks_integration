@@ -26,6 +26,15 @@ const reducer = (state, action) => {
         isLogin: false,
         user: {},
       };
+    case "SET_USER":
+      return {
+        ...state,
+        user: {
+          ...payload,
+          isAdmin: state.user.isAdmin,
+          token: state.user.token,
+        },
+      };
     default:
       throw new Error();
   }
