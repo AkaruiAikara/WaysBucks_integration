@@ -98,9 +98,9 @@ export default function Topping() {
                       <td className="py-4 px-6 border text-md text-gray-500 whitespace-nowrap dark:text-gray-400">
                         {dot(topping.price)}
                       </td>
-                      <td className="py-4 px-6 border text-md text-gray-500 whitespace-nowrap dark:text-gray-400">
+                      <td className="relative py-4 px-6 border text-md text-gray-500 whitespace-nowrap dark:text-gray-400">
                         <img
-                          className="w-[43px] h-[43px] object-cover rounded-full hover:absolute hover:w-[215px] hover:h-[215px] top-1/2 bottom-auto"
+                          className="w-[43px] h-[43px] object-cover rounded-full active:absolute active:w-[215px] active:h-[215px] active:z-10 -top-full -left-1/4"
                           src={topping.image}
                           alt="image"
                         />
