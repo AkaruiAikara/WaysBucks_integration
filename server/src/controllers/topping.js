@@ -39,7 +39,7 @@ exports.getToppingById = (req, res) => {
         });
         return;
       }
-      topping: JSON.parse(JSON.stringify(topping));
+      topping = JSON.parse(JSON.stringify(topping));
       res.send({
         status: "success",
         data: { ...topping, image: process.env.FILE_PATH + topping.image },
