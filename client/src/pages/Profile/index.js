@@ -19,6 +19,15 @@ export default function Profile() {
       navigate("/?a=login");
     }
   }, [state]);
+  const [transactions, setTransactions] = useState([]);
+  // get my transactions data
+  useEffect(() => {
+    if (state.user.id) {
+      API.get(`/transactions/user/${state.user.id}`).then((res) => {
+        setTransactions(res.data.data.transactions);
+      });
+    }
+  }, []);
   // Get user data and set it to state
   const [form, setForm] = useState({
     fullName: state.user.fullName,
@@ -115,7 +124,10 @@ export default function Profile() {
       });
     }
   };
-
+  // function that separate every 3 digits with dot
+  const dot = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
   return (
     <div className="mx-10 lg:mx-20">
       <div className="flex flex-col lg:flex-row gap-4">
@@ -246,57 +258,60 @@ export default function Profile() {
           <h1 className="my-6 text-3xl text-maroon font-bold">
             My Transactions
           </h1>
-          <div className="flex flex-col md:flex-row justify-between px-8 py-4 bg-pinky rounded-lg">
-            <div className="flex-grow">
-              <div className="flex flex-col space-y-4">
-                <div className="flex gap-4">
-                  <img className="mb-auto" src={product} alt="" />
-                  <div>
-                    <h3 className="text-md text-blood font-bold">
-                      Ice Coffee Palm Sugar
-                    </h3>
-                    <h6 className="text-xs text-blood">
-                      <span className="font-black">Saturday: </span>5 March 2020
-                    </h6>
-                    <h5 className="text-sm text-blood mt-4">
-                      <span className="text-maroon">Topping : </span>Bill Berry
-                      Boba, Bubble Tea Gelatin
-                    </h5>
-                    <h5 className="text-sm text-maroon font-thin mt-2">
-                      Price : Rp. 33.000
-                    </h5>
+          <div className="space-y-2">
+            {transactions.map((transaction) => (
+              <div className="flex flex-col md:flex-row justify-between px-8 py-4 bg-pinky rounded-lg">
+                <div className="flex-grow">
+                  <div className="flex flex-col space-y-4">
+                    {transaction.orders.map((order) => (
+                      <div className="flex gap-4">
+                        <img
+                          className="mb-auto w-[80px] h-[97px] rounded-md"
+                          src={order.product.image}
+                          alt=""
+                        />
+                        <div>
+                          <h3 className="text-md text-blood font-bold">
+                            {order.product.title}
+                          </h3>
+                          <h6 className="text-xs text-blood">
+                            {transaction.createdAt}
+                          </h6>
+                          <h5 className="text-sm text-blood mt-4">
+                            <span className="text-maroon">Topping : </span>
+                            {order.toppings.map((topping) => (
+                              <span key={topping.id}>
+                                {topping.title}
+                                {topping.id !==
+                                order.toppings[order.toppings.length - 1].id
+                                  ? ", "
+                                  : null}
+                              </span>
+                            ))}
+                          </h5>
+                          <h5 className="text-sm text-maroon font-thin mt-2">
+                            Price : Rp. {dot(order.totalPrice)}
+                          </h5>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <img className="mb-auto" src={product} alt="" />
-                  <div>
-                    <h3 className="text-md text-blood font-bold">
-                      Ice Coffee Palm Sugar
-                    </h3>
-                    <h6 className="text-xs text-blood">
-                      <span className="font-black">Saturday: </span>5 March 2020
-                    </h6>
-                    <h5 className="text-sm text-blood mt-4">
-                      <span className="text-maroon">Topping : </span>Bill Berry
-                      Boba, Manggo
-                    </h5>
-                    <h5 className="text-sm text-maroon font-thin mt-2">
-                      Price : Rp. 36.000
-                    </h5>
+                <div className="flex-1 my-auto">
+                  <img className="mx-auto" src={logo} alt="" />
+                  <div className="text-md text-center text-maroon">
+                    ID: {transaction.id}
                   </div>
+                  <h5 className="bg-blue-200 rounded-lg px-3 py-1 mt-2 text-blue-400 text-center">
+                    {transaction.status.charAt(0).toUpperCase() +
+                      transaction.status.slice(1)}
+                  </h5>
+                  <h6 className="text-maroon text-sm text-center font-bold mt-2">
+                    Sub Total: {dot(transaction.totalPrice)}
+                  </h6>
                 </div>
               </div>
-            </div>
-            <div className="flex-1">
-              <img className="mx-auto" src={logo} alt="" />
-              <img className="mx-auto mt-4 w-2/3" src={qrcode} alt="" />
-              <h5 className="bg-blue-200 rounded-lg px-3 py-1 mt-2 text-blue-400">
-                On The Way!
-              </h5>
-              <h6 className="text-maroon text-sm text-center font-bold mt-2">
-                Sub Total : 69.000
-              </h6>
-            </div>
+            ))}
           </div>
         </div>
       </div>

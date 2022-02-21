@@ -3,6 +3,7 @@ const {
   User,
   Order,
   Product,
+  Profile,
   Topping,
   OrderTopping,
 } = require("../../models");
@@ -16,11 +17,18 @@ exports.getTransactions = (req, res) => {
           model: User,
           as: "user",
           attributes: ["id", "fullName", "email"],
+          include: [
+            {
+              model: Profile,
+              as: "profile",
+              attributes: ["gender", "address", "phone", "postCode"],
+            },
+          ],
         },
         {
           model: Order,
           as: "orders",
-          attributes: ["id", "qty"],
+          attributes: ["id", "qty", "totalPrice"],
           include: [
             {
               model: Product,
@@ -42,6 +50,12 @@ exports.getTransactions = (req, res) => {
       ],
       attributes: ["id", "status", "totalPrice", "createdAt"],
     }).then((transactions) => {
+      // add FILE_PATH to each transaction orders product image
+      transactions.forEach((transaction) => {
+        transaction.orders.forEach((order) => {
+          order.product.image = process.env.FILE_PATH + order.product.image;
+        });
+      });
       res.send({
         status: "success",
         data: { transactions },
@@ -64,11 +78,18 @@ exports.getTransactionsByUserId = (req, res) => {
           model: User,
           as: "user",
           attributes: ["id", "fullName", "email"],
+          include: [
+            {
+              model: Profile,
+              as: "profile",
+              attributes: ["gender", "address", "phone", "postCode"],
+            },
+          ],
         },
         {
           model: Order,
           as: "orders",
-          attributes: ["id", "qty"],
+          attributes: ["id", "qty", "totalPrice"],
           include: [
             {
               model: Product,
@@ -100,6 +121,12 @@ exports.getTransactionsByUserId = (req, res) => {
         });
         return;
       }
+      // add FILE_PATH to each transaction orders product image
+      transactions.forEach((transaction) => {
+        transaction.orders.forEach((order) => {
+          order.product.image = process.env.FILE_PATH + order.product.image;
+        });
+      });
       res.send({
         status: "success",
         data: { transactions },
@@ -122,6 +149,35 @@ exports.getTransactionById = (req, res) => {
           model: User,
           as: "user",
           attributes: ["id", "fullName", "email"],
+          include: [
+            {
+              model: Profile,
+              as: "profile",
+              attributes: ["gender", "address", "phone", "postCode"],
+            },
+          ],
+        },
+        {
+          model: Order,
+          as: "orders",
+          attributes: ["id", "qty", "totalPrice"],
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["id", "title", "price", "image"],
+            },
+            {
+              model: Topping,
+              as: "toppings",
+              through: {
+                model: OrderTopping,
+                as: "orderToppings",
+                attributes: [],
+              },
+              attributes: ["id", "title", "price"],
+            },
+          ],
         },
       ],
       attributes: ["id", "status", "totalPrice", "createdAt"],
@@ -133,6 +189,10 @@ exports.getTransactionById = (req, res) => {
         });
         return;
       }
+      // add FILE_PATH to each order product image
+      transaction.orders.forEach((order) => {
+        order.product.image = process.env.FILE_PATH + order.product.image;
+      });
       res.send({
         status: "success",
         data: { transaction },
