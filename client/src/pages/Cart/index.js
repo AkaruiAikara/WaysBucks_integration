@@ -82,6 +82,14 @@ export default function Cart() {
         payload: id,
       });
       setTotal(total - res.data.data.totalPrice);
+      if (state.user.id) {
+        API.get(`/users/${state.user.id}`).then((res) => {
+          dispatch({
+            type: "SET_USER",
+            payload: res.data.data.user,
+          });
+        });
+      }
     } catch (error) {
       MySwal.fire({
         icon: "error",

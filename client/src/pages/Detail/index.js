@@ -109,6 +109,16 @@ export default function Detail() {
       });
     }
   };
+  useEffect(() => {
+    if (state.user.id) {
+      API.get(`/users/${state.user.id}`).then((res) => {
+        dispatch({
+          type: "SET_USER",
+          payload: res.data.data.user,
+        });
+      });
+    }
+  }, [alert]);
   // function that separate every 3 digits with dot
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

@@ -297,15 +297,29 @@ export default function Profile() {
                     ))}
                   </div>
                 </div>
-                <div className="flex-1 my-auto">
+                <div className="flex-shrink my-auto">
                   <img className="mx-auto" src={logo} alt="" />
                   <div className="text-md text-center text-maroon">
                     ID: {transaction.id}
                   </div>
-                  <h5 className="bg-blue-200 rounded-lg px-3 py-1 mt-2 text-blue-400 text-center">
-                    {transaction.status.charAt(0).toUpperCase() +
-                      transaction.status.slice(1)}
-                  </h5>
+                  {transaction.status === "pending" && (
+                    <h5 className="bg-yellow-200 rounded-lg px-3 py-1 mt-2 text-yellow-400 text-center">
+                      {transaction.status.charAt(0).toUpperCase() +
+                        transaction.status.slice(1)}
+                    </h5>
+                  )}
+                  {transaction.status === "success" && (
+                    <h5 className="bg-green-200 rounded-lg px-3 py-1 mt-2 text-green-400 text-center">
+                      {transaction.status.charAt(0).toUpperCase() +
+                        transaction.status.slice(1)}
+                    </h5>
+                  )}
+                  {transaction.status === "failed" && (
+                    <h5 className="bg-red-200 rounded-lg px-3 py-1 mt-2 text-red-400 text-center">
+                      {transaction.status.charAt(0).toUpperCase() +
+                        transaction.status.slice(1)}
+                    </h5>
+                  )}
                   <h6 className="text-maroon text-sm text-center font-bold mt-2">
                     Sub Total: {dot(transaction.totalPrice)}
                   </h6>
