@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
@@ -10,10 +10,26 @@ import bin from "../../assets/img/bin.svg";
 import invoice from "../../assets/img/invoice.svg";
 
 export default function Cart() {
+  // initial order
+  const initialOrder = [];
+  // reducer function
+  const reducer = (stateOrder, action) => {
+    switch (action.type) {
+      case "ADD_ORDER":
+        return [...stateOrder, action.payload];
+      case "REMOVE_ORDER":
+        return stateOrder.filter(
+          (stateOrder) => stateOrder.id !== action.payload
+        );
+      default:
+        return stateOrder;
+    }
+  };
+  // reducer for order
+  const [orders, dispatchOrders] = useReducer(reducer, initialOrder);
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
   const [state, dispatch] = useContext(UserContext);
-  const [orders, setOrders] = useState([]);
   const [total, setTotal] = useState(0);
   // get user data from state
   const user = state.user;
@@ -29,10 +45,16 @@ export default function Cart() {
   useEffect(() => {
     if (state.user.id) {
       API.get(`/orders/user/${state.user.id}`).then((res) => {
-        setOrders(res.data.data.orders);
         let total = 0;
+        console.log(res.data.data.orders);
         res.data.data.orders.forEach((order) => {
-          total += order.totalPrice;
+          if (!order.transaction) {
+            total += order.totalPrice;
+            dispatchOrders({
+              type: "ADD_ORDER",
+              payload: order,
+            });
+          }
         });
         setTotal(total);
       });
@@ -55,7 +77,10 @@ export default function Cart() {
         title: "Success!",
         text: "Order deleted",
       });
-      setOrders(orders.filter((order) => order.id !== id));
+      dispatchOrders({
+        type: "REMOVE_ORDER",
+        payload: id,
+      });
       setTotal(total - res.data.data.totalPrice);
     } catch (error) {
       MySwal.fire({
@@ -105,6 +130,7 @@ export default function Cart() {
       });
     }
   };
+  console.log(total);
   // function that separate every 3 digits with dot
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
