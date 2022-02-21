@@ -49,3 +49,33 @@ exports.deleteOrderTopping = (req, res) => {
     });
   }
 };
+
+// delete order topping pivot by order id
+exports.deleteOrderToppingByOrderId = (req, res) => {
+  try {
+    OrderTopping.destroy({
+      where: {
+        orderId: req.params.orderId,
+      },
+    }).then((orderTopping) => {
+      if (!orderTopping) {
+        res.status(404).send({
+          status: "error",
+          message: "Order not found",
+        });
+        return;
+      }
+      res.send({
+        status: "success",
+        data: {
+          orderId: req.params.id,
+        },
+      });
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+};

@@ -27,8 +27,9 @@ export default function Profile() {
     phone: state.user.profile?.phone,
     gender: state.user.profile?.gender,
     address: state.user.profile?.address,
+    postCode: state.user.profile?.postCode,
   });
-  const { fullName, email, image, phone, gender, address } = form;
+  const { fullName, email, image, phone, gender, address, postCode } = form;
   const [button, setButton] = useState(false);
   const [preview, setPreview] = useState(image);
   // handle input change
@@ -73,6 +74,7 @@ export default function Profile() {
       dataProfile.set("phone", phone);
       dataProfile.set("gender", gender);
       dataProfile.set("address", address);
+      dataProfile.set("postCode", postCode);
 
       const epUser = `/users/${state.user.id}`;
       const epProfile = `/profiles/${state.user.id}`;
@@ -223,6 +225,16 @@ export default function Profile() {
                     onChange={handleChange}
                     cols="30"
                     rows="3"
+                    className="border-0 rounded-sm"
+                  />
+                </label>
+                <label htmlFor="postCode" className="space-y-1">
+                  <h3 className="text-xl text-maroon font-bold">Post Code</h3>
+                  <input
+                    name="postCode"
+                    id="postCode"
+                    value={postCode}
+                    onChange={handleChange}
                     className="border-0 rounded-sm"
                   />
                 </label>

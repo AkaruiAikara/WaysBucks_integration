@@ -12,6 +12,23 @@ import shopbasket from "../../assets/img/shopbasket.png";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [state, dispatch] = useContext(UserContext);
+  const [orders, setOrders] = useState([]);
+  const [count, setCount] = useState(0);
+  // get orders by user id
+  useEffect(() => {
+    if (state.user.id) {
+      API.get(`/orders/user/${state.user.id}`).then((res) => {
+        setOrders(res.data.data.orders);
+        let total = 0;
+        res.data.data.orders.forEach((order) => {
+          if (!order.transaction) {
+            total++;
+          }
+        });
+        setCount(total);
+      });
+    }
+  }, [state]);
   const location = useLocation();
   return (
     <nav className="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-600 my-5">
@@ -22,8 +39,13 @@ export default function Navbar() {
         {state.isLogin ? (
           <ul className="flex justify-end items-center space-x-12">
             <li>
-              <Link to="cart">
+              <Link to="cart" className="relative">
                 <img src={shopbasket} alt="avatar" />
+                {count > 0 && (
+                  <span className="absolute left-4 top-5 pt-0.5 text-xs text-center text-white bg-blood rounded-full w-[20px] h-[20px]">
+                    {count}
+                  </span>
+                )}
               </Link>
             </li>
             <li>

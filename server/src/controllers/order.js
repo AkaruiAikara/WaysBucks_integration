@@ -12,12 +12,12 @@ const {
 exports.getOrders = (req, res) => {
   try {
     Order.findAll({
-      attributes: ["id", "qty"],
+      attributes: ["id", "qty", "totalPrice"],
       include: [
         {
           model: Transaction,
           as: "transaction",
-          attributes: ["id", "status"],
+          attributes: ["id", "status", "totalPrice"],
         },
         {
           model: Product,
@@ -72,12 +72,12 @@ exports.getOrders = (req, res) => {
 exports.getOrderById = (req, res) => {
   try {
     Order.findByPk(req.params.id, {
-      attributes: ["id", "qty"],
+      attributes: ["id", "qty", "totalPrice"],
       include: [
         {
           model: Transaction,
           as: "transaction",
-          attributes: ["id", "status"],
+          attributes: ["id", "status", "totalPrice"],
         },
         {
           model: Product,
@@ -136,12 +136,12 @@ exports.getOrderById = (req, res) => {
 exports.getOrdersByTransactionId = (req, res) => {
   try {
     Order.findAll({
-      attributes: ["id", "qty"],
+      attributes: ["id", "qty", "totalPrice"],
       include: [
         {
           model: Transaction,
           as: "transaction",
-          attributes: ["id", "status"],
+          attributes: ["id", "status", "totalPrice"],
         },
         {
           model: Product,
@@ -206,12 +206,12 @@ exports.getOrdersByTransactionId = (req, res) => {
 exports.getOrdersByUserId = (req, res) => {
   try {
     Order.findAll({
-      attributes: ["id", "qty"],
+      attributes: ["id", "qty", "totalPrice"],
       include: [
         {
           model: Transaction,
           as: "transaction",
-          attributes: ["id", "status"],
+          attributes: ["id", "status", "totalPrice"],
         },
         {
           model: Product,

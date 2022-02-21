@@ -40,7 +40,7 @@ exports.getTransactions = (req, res) => {
           ],
         },
       ],
-      attributes: ["id", "status", "createdAt"],
+      attributes: ["id", "status", "totalPrice", "createdAt"],
     }).then((transactions) => {
       res.send({
         status: "success",
@@ -88,7 +88,7 @@ exports.getTransactionsByUserId = (req, res) => {
           ],
         },
       ],
-      attributes: ["id", "status", "createdAt"],
+      attributes: ["id", "status", "totalPrice", "createdAt"],
       where: {
         userId: req.params.userId,
       },
@@ -124,7 +124,7 @@ exports.getTransactionById = (req, res) => {
           attributes: ["id", "fullName", "email"],
         },
       ],
-      attributes: ["id", "status", "createdAt"],
+      attributes: ["id", "status", "totalPrice", "createdAt"],
     }).then((transaction) => {
       if (!transaction) {
         res.status(404).send({
@@ -152,6 +152,7 @@ exports.addTransaction = (req, res) => {
     Transaction.create({
       userId: req.body.userId,
       status: req.body.status,
+      totalPrice: req.body.totalPrice,
     }).then((transaction) => {
       res.send({
         status: "success",

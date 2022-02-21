@@ -15,7 +15,7 @@ exports.getUsers = (req, res) => {
         {
           model: Profile,
           as: "profile",
-          attributes: ["phone", "gender", "address"],
+          attributes: ["phone", "gender", "address", "postCode"],
         },
         {
           model: Order,
@@ -25,7 +25,7 @@ exports.getUsers = (req, res) => {
             {
               model: Transaction,
               as: "transaction",
-              attributes: ["id", "status"],
+              attributes: ["id", "status", "totalPrice"],
             },
             {
               model: Product,
@@ -68,7 +68,7 @@ exports.getUserById = (req, res) => {
         {
           model: Profile,
           as: "profile",
-          attributes: ["phone", "gender", "address"],
+          attributes: ["phone", "gender", "address", "postCode"],
         },
         {
           model: Order,
@@ -78,7 +78,7 @@ exports.getUserById = (req, res) => {
             {
               model: Transaction,
               as: "transaction",
-              attributes: ["id", "status"],
+              attributes: ["id", "status", "totalPrice"],
             },
             {
               model: Product,
