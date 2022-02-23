@@ -80,12 +80,12 @@ router.post("/products", uploadFile("image"), addProduct);
 router.patch("/products/:id", uploadFile("image"), updateProduct);
 router.delete("/products/:id", deleteProduct);
 // transaction
-router.get("/transactions", getTransactions);
-router.get("/transactions/user/:userId", getTransactionsByUserId);
-router.get("/transactions/:id", getTransactionById);
-router.post("/transactions", addTransaction);
-router.patch("/transactions/:id", updateTransaction);
-router.delete("/transactions/:id", deleteTransaction);
+router.get("/transactions", auth, getTransactions);
+router.get("/transactions/user/:userId", auth, getTransactionsByUserId);
+router.get("/transactions/:id", auth, getTransactionById);
+router.post("/transactions", auth, addTransaction);
+router.patch("/transactions/:id", auth, updateTransaction);
+router.delete("/transactions/:id", auth, deleteTransaction);
 // topping
 router.get("/toppings", getToppings);
 router.get("/toppings/:id", getToppingById);

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API } from "../../../config/api";
 
 export default function DashContent() {
+  document.title = "Dashboard | WaysBucks";
   const [total, setTotal] = useState({
     users: 0,
     products: 0,

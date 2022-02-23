@@ -1,7 +1,24 @@
+import { useEffect } from "react";
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
+import { API } from "../../config/api";
+
 import jumbotronimg from "../../assets/img/jumbotron-img.png";
 import slice from "../../assets/img/slice.png";
 
 export default function Jumbotron() {
+  const [state, dispatch] = useContext(UserContext);
+  // get more user data
+  useEffect(() => {
+    if (state.user.id) {
+      API.get(`/users/${state.user.id}`).then((res) => {
+        dispatch({
+          type: "SET_USER",
+          payload: res.data.data.user,
+        });
+      });
+    }
+  }, []);
   return (
     <div className="mb-96 lg:mx-20 lg:mb-0">
       <div className="relative flex flex-column lg:flex-row items-center px-8 lg:pl-20 lg:pr-80 py-24 lg:py-20 lg:mr-48 bg-blood text-white rounded-lg">

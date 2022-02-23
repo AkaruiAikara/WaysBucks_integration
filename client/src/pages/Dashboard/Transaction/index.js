@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { API } from "../../../config/api";
+import { API, setAuthToken } from "../../../config/api";
 
 import success from "../../../assets/img/success.svg";
 import cancel from "../../../assets/img/cancel.svg";
 
 export default function Transaction() {
+  document.title = "Transactions | WaysBucks";
   const [transactions, setTransactions] = useState([]);
   // get all transactions
   useEffect(() => {
     API.get("/transactions").then((res) => {
       setTransactions(res.data.data.transactions);
     });
+    if (localStorage.getItem("token")) {
+      setAuthToken(localStorage.getItem("token"));
+    }
   }, []);
   // update transaction status to failed or success
   const updateTransaction = (id, status) => {
@@ -115,6 +119,9 @@ export default function Transaction() {
                         {transaction.status === "pending" && (
                           <div className="text-yellow-300">Pending</div>
                         )}
+                        {transaction.status === "on-delivery" && (
+                          <div className="text-sky-500">On Delivery</div>
+                        )}
                         {transaction.status === "success" && (
                           <div className="text-green-500">Success</div>
                         )}
@@ -135,7 +142,7 @@ export default function Transaction() {
                             </button>
                             <button
                               onClick={() =>
-                                updateTransaction(transaction.id, "success")
+                                updateTransaction(transaction.id, "on-delivery")
                               }
                               className="flex-1 px-4 py-1 bg-green-500 text-white hover:bg-green-800 rounded-xl"
                             >
@@ -143,11 +150,14 @@ export default function Transaction() {
                             </button>
                           </div>
                         )}
+                        {transaction.status === "on-delivery" && (
+                          <i className="bi bi-truck bg-sky-500 px-1.5 py-1 text-white rounded-full"></i>
+                        )}
                         {transaction.status === "success" && (
-                          <img src={success} alt="success" />
+                          <i className="bi bi-check-lg bg-green-500 px-1.5 py-1 text-white rounded-full"></i>
                         )}
                         {transaction.status === "failed" && (
-                          <img src={cancel} alt="cancel" />
+                          <i className="bi bi-x-lg bg-red-500 px-1.5 py-1 text-white rounded-full"></i>
                         )}
                       </td>
                     </tr>

@@ -38,16 +38,18 @@ export default function Navbar() {
         </Link>
         {state.isLogin ? (
           <ul className="flex justify-end items-center space-x-12">
-            <li>
-              <Link to="cart" className="relative">
-                <img src={shopbasket} alt="avatar" />
-                {count > 0 && (
-                  <span className="absolute left-4 top-5 pt-0.5 text-xs text-center text-white bg-blood rounded-full w-[20px] h-[20px]">
-                    {count}
-                  </span>
-                )}
-              </Link>
-            </li>
+            {state.user.isAdmin ? null : (
+              <li>
+                <Link to="cart" className="relative">
+                  <img src={shopbasket} alt="avatar" />
+                  {count > 0 && (
+                    <span className="absolute left-4 top-5 pt-0.5 text-xs text-center text-white bg-blood rounded-full w-[20px] h-[20px]">
+                      {count}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            )}
             <li>
               <div className="relative">
                 <button
@@ -63,7 +65,12 @@ export default function Navbar() {
                     alt="avatar"
                   />
                 </button>
-                {isOpen ? <Dropdown /> : null}
+                {isOpen ? (
+                  <Dropdown
+                    setIsOpen={setIsOpen}
+                    onClickOutside={() => setIsOpen(false)}
+                  />
+                ) : null}
               </div>
             </li>
           </ul>

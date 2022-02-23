@@ -2,7 +2,7 @@ import { useEffect, useState, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
-import { API } from "../../config/api";
+import { API, setAuthToken } from "../../config/api";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -10,6 +10,7 @@ import bin from "../../assets/img/bin.svg";
 import invoice from "../../assets/img/invoice.svg";
 
 export default function Cart() {
+  document.title = "Cart | WaysBucks";
   // initial order
   const initialOrder = [];
   // reducer function
@@ -46,7 +47,6 @@ export default function Cart() {
     if (state.user.id) {
       API.get(`/orders/user/${state.user.id}`).then((res) => {
         let total = 0;
-        console.log(res.data.data.orders);
         res.data.data.orders.forEach((order) => {
           if (!order.transaction) {
             total += order.totalPrice;
@@ -64,12 +64,17 @@ export default function Cart() {
     if (!state.isLogin) {
       navigate("/?a=login");
     }
+    if (localStorage.getItem("token")) {
+      setAuthToken(localStorage.getItem("token"));
+    }
   }, []);
   // delete order with toast notification without confirmation
-  const deleteOrder = async (id) => {
+  const deleteOrder = async (id, toppings) => {
     try {
       // delete order toppings first
-      await API.delete(`/order-toppings/${id}`);
+      if (toppings.length > 0) {
+        await API.delete(`/order-toppings/${id}`);
+      }
       // delete order
       const res = await API.delete(`/orders/${id}`);
       MySwal.fire({
@@ -102,34 +107,42 @@ export default function Cart() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // config
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      // post transaction first
-      const resp = await API.post(
-        "/transactions",
-        {
-          userId: user.id,
-          totalPrice: total,
-          status: "pending",
-        },
-        config
-      );
-      // update transaction id to each order
-      orders.forEach(async (order) => {
-        await API.patch(`/orders/${order.id}`, {
-          transactionId: resp.data.data.transaction.id,
+      if (orders.length > 0) {
+        // config
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        // post transaction first
+        const resp = await API.post(
+          "/transactions",
+          {
+            userId: user.id,
+            totalPrice: total,
+            status: "pending",
+          },
+          config
+        );
+        // update transaction id to each order
+        orders.forEach(async (order) => {
+          await API.patch(`/orders/${order.id}`, {
+            transactionId: resp.data.data.transaction.id,
+          });
         });
-      });
-      MySwal.fire({
-        icon: "success",
-        title: "Success!",
-        text: "Order created",
-      });
-      navigate("/");
+        MySwal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Transaction has been created, please wait for admin to confirm",
+        });
+        navigate("/");
+      } else {
+        MySwal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Your cart is empty",
+        });
+      }
     } catch (error) {
       MySwal.fire({
         icon: "error",
@@ -138,7 +151,6 @@ export default function Cart() {
       });
     }
   };
-  console.log(total);
   // function that separate every 3 digits with dot
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -148,72 +160,80 @@ export default function Cart() {
       <div className="flex flex-col lg:flex-row gap-24 justify-center">
         <div className="flex-1">
           <h2 className="text-3xl text-blood font-bold">My Cart</h2>
-          <h5 className="text-xl text-blood mt-5">Review Your Order</h5>
-          <hr className="w-full my-4 border border-blood"></hr>
-          <div className="space-y-2">
-            {orders.map((order) => (
-              <div key={order.id} className="flex items-center">
-                <img
-                  className="w-[80px] h-[80px] object-cover rounded-md"
-                  src={order.product.image}
-                  alt="product"
-                />
-                <div className="flex flex-col ml-4 w-full space-y-2">
+          {orders.length > 0 ? (
+            <>
+              <h5 className="text-xl text-blood mt-5">Review Your Order</h5>
+              <hr className="w-full my-4 border border-blood"></hr>
+              <div className="space-y-2">
+                {orders.map((order) => (
+                  <div key={order.id} className="flex items-center">
+                    <img
+                      className="w-[80px] h-[80px] object-cover rounded-md"
+                      src={order.product.image}
+                      alt="product"
+                    />
+                    <div className="flex flex-col ml-4 w-full space-y-2">
+                      <div className="flex flex-row justify-between items-center">
+                        <h5 className="text-xl text-blood font-bold">
+                          {order.product.title}
+                        </h5>
+                        <span className="text-lg text-blood">
+                          Rp. {dot(order.totalPrice)}
+                        </span>
+                      </div>
+                      <div className="flex flex-row justify-between items-center">
+                        <h5 className="text-lg text-maroon">
+                          Topping :{" "}
+                          <span className="text-blood">
+                            {order.toppings.map((topping) => (
+                              // if topping is not last, add comma
+                              <span key={topping.id}>
+                                {topping.title}
+                                {order.toppings.indexOf(topping) !==
+                                  order.toppings.length - 1 && ", "}
+                              </span>
+                            ))}
+                          </span>
+                        </h5>
+                        <button
+                          onClick={() => deleteOrder(order.id, order.toppings)}
+                        >
+                          <img src={bin} alt="" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <hr className="w-full my-4 border border-blood"></hr>
+              <div className="flex-grow flex mt-6 gap-2 lg:gap-32">
+                <div className="flex flex-col w-full space-y-2">
+                  <hr className="w-full mt-4 border-0.5 border-blood"></hr>
                   <div className="flex flex-row justify-between items-center">
-                    <h5 className="text-xl text-blood font-bold">
-                      {order.product.title}
-                    </h5>
-                    <span className="text-lg text-blood">
-                      Rp. {dot(order.totalPrice)}
+                    <h5 className="text-lg text-blood">Subtotal</h5>
+                    <span className="text-lg text-blood">Rp. {dot(total)}</span>
+                  </div>
+                  <div className="flex flex-row justify-between items-center">
+                    <h5 className="text-lg text-blood">Qty</h5>
+                    <span className="text-lg text-blood">{orders.length}</span>
+                  </div>
+                  <hr className="w-full my-4 border-0.5 border-blood"></hr>
+                  <div className="flex flex-row justify-between items-center">
+                    <h5 className="text-lg text-blood font-bold">Total</h5>
+                    <span className="text-lg text-blood font-bold">
+                      Rp. {dot(total)}
                     </span>
                   </div>
-                  <div className="flex flex-row justify-between items-center">
-                    <h5 className="text-lg text-maroon">
-                      Topping :{" "}
-                      <span className="text-blood">
-                        {order.toppings.map((topping) => (
-                          // if topping is not last, add comma
-                          <span key={topping.id}>
-                            {topping.title}
-                            {order.toppings.indexOf(topping) !==
-                              order.toppings.length - 1 && ", "}
-                          </span>
-                        ))}
-                      </span>
-                    </h5>
-                    <button onClick={() => deleteOrder(order.id)}>
-                      <img src={bin} alt="" />
-                    </button>
-                  </div>
+                </div>
+                <div className="border-2 border-blood bg-smooth text-center justify-center py-3 px-8 rounded-md whitespace-nowrap">
+                  <img className="mx-auto p-2" src={invoice} alt="" />
+                  <h5 className="text-md text-blood">Attache of Transaction</h5>
                 </div>
               </div>
-            ))}
-          </div>
-          <hr className="w-full my-4 border border-blood"></hr>
-          <div className="flex-grow flex mt-6 gap-2 lg:gap-32">
-            <div className="flex flex-col w-full space-y-2">
-              <hr className="w-full mt-4 border-0.5 border-blood"></hr>
-              <div className="flex flex-row justify-between items-center">
-                <h5 className="text-lg text-blood">Subtotal</h5>
-                <span className="text-lg text-blood">Rp. {dot(total)}</span>
-              </div>
-              <div className="flex flex-row justify-between items-center">
-                <h5 className="text-lg text-blood">Qty</h5>
-                <span className="text-lg text-blood">{orders.length}</span>
-              </div>
-              <hr className="w-full my-4 border-0.5 border-blood"></hr>
-              <div className="flex flex-row justify-between items-center">
-                <h5 className="text-lg text-blood font-bold">Total</h5>
-                <span className="text-lg text-blood font-bold">
-                  Rp. {dot(total)}
-                </span>
-              </div>
-            </div>
-            <div className="border-2 border-blood bg-smooth text-center justify-center py-3 px-8 rounded-md whitespace-nowrap">
-              <img className="mx-auto p-2" src={invoice} alt="" />
-              <h5 className="text-md text-blood">Attache of Transaction</h5>
-            </div>
-          </div>
+            </>
+          ) : (
+            <h5 className="text-xl text-blood mt-5">Your cart is empty</h5>
+          )}
         </div>
         <div className="text-center">
           <form onSubmit={handleSubmit}>

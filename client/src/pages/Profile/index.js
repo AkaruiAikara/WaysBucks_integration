@@ -2,21 +2,26 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
-import { API } from "../../config/api";
+import { API, setAuthToken } from "../../config/api";
 import Alert from "../../components/Alert";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 import avatar from "../../assets/img/avatar.jpg";
-import product from "../../assets/img/product-small.png";
 import logo from "../../assets/img/logo-small.png";
-import qrcode from "../../assets/img/qrcode.png";
 
 export default function Profile() {
+  document.title = "Profile | WaysBucks";
+  const MySwal = withReactContent(Swal);
   const navigate = useNavigate();
   const [alert, setAlert] = useState(null);
   const [state, dispatch] = useContext(UserContext);
   useEffect(() => {
     if (!state.isLogin) {
       navigate("/?a=login");
+    }
+    if (localStorage.getItem("token")) {
+      setAuthToken(localStorage.getItem("token"));
     }
   }, [state]);
   const [transactions, setTransactions] = useState([]);
@@ -123,6 +128,35 @@ export default function Profile() {
         message: error.message,
       });
     }
+  };
+  // update transaction status
+  const updateStatus = (id) => {
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+    API.patch(`/transactions/${id}`, { status: "success" }, config)
+      .then((res) => {
+        API.get(`/transactions/user/${state.user.id}`).then((res) => {
+          setTransactions(res.data.data.transactions);
+        });
+        // modal
+        MySwal.fire({
+          title: "Success",
+          text: "Transaction has been updated",
+          icon: "success",
+          confirmButtonText: "Ok",
+        });
+      })
+      .catch((err) => {
+        MySwal.fire({
+          title: "Error",
+          text: err.message,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      });
   };
   // function that separate every 3 digits with dot
   const dot = (number) => {
@@ -258,9 +292,12 @@ export default function Profile() {
           <h1 className="my-6 text-3xl text-maroon font-bold">
             My Transactions
           </h1>
-          <div className="space-y-2">
+          <div className="space-y-4">
             {transactions.map((transaction) => (
-              <div className="flex flex-col md:flex-row justify-between px-8 py-4 bg-pinky rounded-lg">
+              <div
+                key={transaction.id}
+                className="flex flex-col md:flex-row justify-between px-8 py-4 bg-pinky rounded-xl"
+              >
                 <div className="flex-grow">
                   <div className="flex flex-col space-y-4">
                     {transaction.orders.map((order) => (
@@ -297,27 +334,37 @@ export default function Profile() {
                     ))}
                   </div>
                 </div>
-                <div className="flex-shrink my-auto">
+                <div className="flex flex-col justify-center flex-shrink my-auto">
                   <img className="mx-auto" src={logo} alt="" />
                   <div className="text-md text-center text-maroon">
                     ID: {transaction.id}
                   </div>
                   {transaction.status === "pending" && (
                     <h5 className="bg-yellow-200 rounded-lg px-3 py-1 mt-2 text-yellow-400 text-center">
-                      {transaction.status.charAt(0).toUpperCase() +
-                        transaction.status.slice(1)}
+                      Pending
                     </h5>
+                  )}
+                  {transaction.status === "on-delivery" && (
+                    <>
+                      <h5 className="bg-sky-200 rounded-lg px-3 py-1 mt-2 text-sky-400 text-center">
+                        On Delivery
+                      </h5>
+                      <button
+                        onClick={() => updateStatus(transaction.id)}
+                        className="mt-4 bg-blood px-2 py-1 rounded-2xl hover:bg-red-900 text-center text-white"
+                      >
+                        Delivered
+                      </button>
+                    </>
                   )}
                   {transaction.status === "success" && (
                     <h5 className="bg-green-200 rounded-lg px-3 py-1 mt-2 text-green-400 text-center">
-                      {transaction.status.charAt(0).toUpperCase() +
-                        transaction.status.slice(1)}
+                      Success
                     </h5>
                   )}
                   {transaction.status === "failed" && (
                     <h5 className="bg-red-200 rounded-lg px-3 py-1 mt-2 text-red-400 text-center">
-                      {transaction.status.charAt(0).toUpperCase() +
-                        transaction.status.slice(1)}
+                      Failed
                     </h5>
                   )}
                   <h6 className="text-maroon text-sm text-center font-bold mt-2">

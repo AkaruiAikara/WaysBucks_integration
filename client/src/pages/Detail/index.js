@@ -37,6 +37,9 @@ export default function Detail() {
     if (!state.isLogin) {
       navigate("/?a=login");
     }
+    if (state.user.isAdmin) {
+      navigate("/dashboard/index");
+    }
   });
   const [selectedToppings, setSelectedToppings] = useState([]);
   // calculate price
@@ -119,6 +122,7 @@ export default function Detail() {
       });
     }
   }, [alert]);
+  document.title = `${product.title} | WaysBucks`;
   // function that separate every 3 digits with dot
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

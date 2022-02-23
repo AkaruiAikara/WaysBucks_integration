@@ -6,6 +6,7 @@ import Jumbotron from "../../components/Jumbotron";
 import ListProducts from "../../components/ListProducts";
 
 export default function Home() {
+  document.title = "Landing Page | WaysBucks";
   const [state, dispatch] = useContext(UserContext);
   // get more user data
   useEffect(() => {

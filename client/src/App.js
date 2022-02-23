@@ -37,6 +37,15 @@ export default function App() {
       if (state.user.isAdmin) {
         navigate("/dashboard/index");
       } else {
+        // get more user data
+        if (state.user.id) {
+          API.get(`/users/${state.user.id}`).then((res) => {
+            dispatch({
+              type: "SET_USER",
+              payload: res.data.data.user,
+            });
+          });
+        }
         navigate("/");
       }
     }

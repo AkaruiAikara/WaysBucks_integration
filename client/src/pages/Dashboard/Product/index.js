@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 export default function Product() {
+  document.title = "Products | WaysBucks";
   const [products, setProducts] = useState([]);
   // get all products
   useEffect(() => {
@@ -111,13 +112,13 @@ export default function Product() {
                             to={"" + product.id}
                             className="flex-1 py-1 bg-sky-500 text-white text-center hover:bg-sky-800 rounded-xl"
                           >
-                            <i class="bi bi-pencil-square"></i>
+                            <i className="bi bi-pencil-square"></i>
                           </Link>
                           <button
                             onClick={() => deleteProduct(product.id)}
                             className="flex-1 py-1 bg-red-500 text-white hover:bg-red-800 rounded-xl"
                           >
-                            <i class="bi bi-trash3"></i>
+                            <i className="bi bi-trash3"></i>
                           </button>
                         </div>
                       </td>
