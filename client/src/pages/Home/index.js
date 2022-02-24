@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 import { API } from "../../config/api";
 
@@ -11,18 +11,23 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [state, dispatch] = useContext(UserContext);
   // get more user data
-  useEffect(() => {
-    if (state.user.id) {
-      API.get(`/users/${state.user.id}`).then((res) => {
+  const getUserData = useCallback(async () => {
+    try {
+      if (state.user.id) {
+        const res = await API.get(`/users/${state.user.id}`);
         dispatch({
           type: "SET_USER",
           payload: res.data.data.user,
         });
         setLoading(false);
-      });
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, []);
-  //
+  }, [state.user.id, dispatch]);
+  useEffect(() => {
+    getUserData();
+  }, [getUserData]);
   return loading ? (
     <Preloader />
   ) : (

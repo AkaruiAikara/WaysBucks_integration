@@ -43,7 +43,7 @@ export default function Navbar() {
                 <Link to="cart" className="relative">
                   <img src={shopbasket} alt="avatar" />
                   {count > 0 && (
-                    <span className="absolute left-4 top-5 pt-0.5 text-xs text-center text-white bg-blood rounded-full w-[20px] h-[20px]">
+                    <span className="absolute left-4 top-0 pt-0.5 text-xs text-center text-white bg-blood rounded-full w-[20px] h-[20px]">
                       {count}
                     </span>
                   )}

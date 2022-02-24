@@ -7,6 +7,7 @@ import Modal from "react-modal";
 
 import Navbar from "./components/Navbar";
 import ModalAuth from "./components/ModalAuth";
+import ChatBox from "./components/ChatBox";
 import Home from "./pages/Home";
 import Detail from "./pages/Detail";
 import Cart from "./pages/Cart";
@@ -47,7 +48,6 @@ export default function App() {
             });
           });
         }
-        navigate("/");
       }
     }
   }, [state.isLogin]);
@@ -82,27 +82,30 @@ export default function App() {
     checkToken();
   }, []);
   return (
-    <div className="container mx-auto my-6">
-      <ModalAuth />
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="detail/:id" element={<Detail />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="add-topping" element={<AddTopping />} />
-        <Route path="dashboard" element={<Dashboard />}>
-          <Route path="index" element={<DashContent />} />
-          <Route path="transactions" element={<Transaction />} />
-          <Route path="transactions/:id" element={<TransDetail />} />
-          <Route path="products" element={<Product />} />
-          <Route path="products/add" element={<AddProduct />} />
-          <Route path="products/:id" element={<AddProduct />} />
-          <Route path="toppings" element={<Topping />} />
-          <Route path="toppings/add" element={<AddTopping />} />
-          <Route path="toppings/:id" element={<AddTopping />} />
-        </Route>
-      </Routes>
+    <div className="container my-6">
+      <div className="relative h-[96vh] mx-8">
+        <ModalAuth />
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="detail/:id" element={<Detail />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="add-topping" element={<AddTopping />} />
+          <Route path="dashboard" element={<Dashboard />}>
+            <Route path="index" element={<DashContent />} />
+            <Route path="transactions" element={<Transaction />} />
+            <Route path="transactions/:id" element={<TransDetail />} />
+            <Route path="products" element={<Product />} />
+            <Route path="products/add" element={<AddProduct />} />
+            <Route path="products/:id" element={<AddProduct />} />
+            <Route path="toppings" element={<Topping />} />
+            <Route path="toppings/add" element={<AddTopping />} />
+            <Route path="toppings/:id" element={<AddTopping />} />
+          </Route>
+        </Routes>
+        <ChatBox />
+      </div>
     </div>
   );
 }
