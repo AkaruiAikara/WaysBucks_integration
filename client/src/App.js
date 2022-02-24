@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 import DashContent from "./pages/Dashboard/DashContent";
 import Product from "./pages/Dashboard/Product";
 import Topping from "./pages/Dashboard/Topping";
+import TransDetail from "./pages/TransDetail";
 
 Modal.setAppElement("#root");
 
@@ -93,6 +94,7 @@ export default function App() {
         <Route path="dashboard" element={<Dashboard />}>
           <Route path="index" element={<DashContent />} />
           <Route path="transactions" element={<Transaction />} />
+          <Route path="transactions/:id" element={<TransDetail />} />
           <Route path="products" element={<Product />} />
           <Route path="products/add" element={<AddProduct />} />
           <Route path="products/:id" element={<AddProduct />} />

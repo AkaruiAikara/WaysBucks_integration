@@ -312,7 +312,7 @@ export default function Profile() {
                             {order.product.title}
                           </h3>
                           <h6 className="text-xs text-blood">
-                            {transaction.createdAt}
+                            {new Date(transaction.createdAt).toLocaleString()}
                           </h6>
                           <h5 className="text-sm text-blood mt-4">
                             <span className="text-maroon">Topping : </span>

@@ -48,7 +48,7 @@ exports.getTransactions = (req, res) => {
           ],
         },
       ],
-      attributes: ["id", "status", "totalPrice", "createdAt"],
+      attributes: ["id", "status", "totalPrice", "image", "createdAt"],
     }).then((transactions) => {
       // add FILE_PATH to each transaction orders product image
       transactions.forEach((transaction) => {
@@ -109,7 +109,7 @@ exports.getTransactionsByUserId = (req, res) => {
           ],
         },
       ],
-      attributes: ["id", "status", "totalPrice", "createdAt"],
+      attributes: ["id", "status", "totalPrice", "image", "createdAt"],
       where: {
         userId: req.params.userId,
       },
@@ -180,7 +180,7 @@ exports.getTransactionById = (req, res) => {
           ],
         },
       ],
-      attributes: ["id", "status", "totalPrice", "createdAt"],
+      attributes: ["id", "status", "totalPrice", "image", "createdAt"],
     }).then((transaction) => {
       if (!transaction) {
         res.status(404).send({
@@ -193,6 +193,10 @@ exports.getTransactionById = (req, res) => {
       transaction.orders.forEach((order) => {
         order.product.image = process.env.FILE_PATH + order.product.image;
       });
+      // add FILE_PATH to transaction invoice image if exist
+      if (transaction.image) {
+        transaction.image = process.env.FILE_PATH + transaction.image;
+      }
       res.send({
         status: "success",
         data: { transaction },
@@ -213,6 +217,7 @@ exports.addTransaction = (req, res) => {
       userId: req.body.userId,
       status: req.body.status,
       totalPrice: req.body.totalPrice,
+      image: req.file.filename,
     }).then((transaction) => {
       res.send({
         status: "success",

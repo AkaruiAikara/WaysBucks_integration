@@ -41,6 +41,7 @@ export default function Cart() {
     phone: user.profile?.phone,
     address: user.profile?.address,
     postCode: user.profile?.postCode,
+    image: null,
   });
   // get orders by user id
   useEffect(() => {
@@ -103,6 +104,22 @@ export default function Cart() {
       });
     }
   };
+  const [preview, setPreview] = useState(null);
+  // handle input change
+  const handleChange = (e) => {
+    if (e.target.name === "image") {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
   // handle submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,19 +128,28 @@ export default function Cart() {
         // config
         const config = {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multi-part/form-data",
           },
         };
-        // post transaction first
-        const resp = await API.post(
-          "/transactions",
-          {
-            userId: user.id,
-            totalPrice: total,
-            status: "pending",
-          },
-          config
+        // set form data
+        const formData = new FormData();
+        formData.set("userId", user.id);
+        formData.set("totalPrice", total);
+        formData.set("status", "pending");
+        if (!form.image) {
+          return MySwal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Please upload invoice image",
+          });
+        }
+        formData.set(
+          "image",
+          document.getElementById("image").files[0],
+          document.getElementById("image").files[0].name
         );
+        // post transaction first
+        const resp = await API.post("/transactions", formData, config);
         // update transaction id to each order
         orders.forEach(async (order) => {
           await API.patch(`/orders/${order.id}`, {
@@ -149,6 +175,9 @@ export default function Cart() {
         title: "Oops...",
         text: `Something went wrong!. ${error}`,
       });
+      if (error.response) {
+        console.log(error.response.data);
+      }
     }
   };
   // function that separate every 3 digits with dot
@@ -157,86 +186,114 @@ export default function Cart() {
   };
   return (
     <div className="mx-5 lg:mx-20">
-      <div className="flex flex-col lg:flex-row gap-24 justify-center">
-        <div className="flex-1">
-          <h2 className="text-3xl text-blood font-bold">My Cart</h2>
-          {orders.length > 0 ? (
-            <>
-              <h5 className="text-xl text-blood mt-5">Review Your Order</h5>
-              <hr className="w-full my-4 border border-blood"></hr>
-              <div className="space-y-2">
-                {orders.map((order) => (
-                  <div key={order.id} className="flex items-center">
-                    <img
-                      className="w-[80px] h-[80px] object-cover rounded-md"
-                      src={order.product.image}
-                      alt="product"
-                    />
-                    <div className="flex flex-col ml-4 w-full space-y-2">
-                      <div className="flex flex-row justify-between items-center">
-                        <h5 className="text-xl text-blood font-bold">
-                          {order.product.title}
-                        </h5>
-                        <span className="text-lg text-blood">
-                          Rp. {dot(order.totalPrice)}
-                        </span>
-                      </div>
-                      <div className="flex flex-row justify-between items-center">
-                        <h5 className="text-lg text-maroon">
-                          Topping :{" "}
-                          <span className="text-blood">
-                            {order.toppings.map((topping) => (
-                              // if topping is not last, add comma
-                              <span key={topping.id}>
-                                {topping.title}
-                                {order.toppings.indexOf(topping) !==
-                                  order.toppings.length - 1 && ", "}
-                              </span>
-                            ))}
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col lg:flex-row gap-24 justify-center">
+          <div className="flex-1">
+            <h2 className="text-3xl text-blood font-bold">My Cart</h2>
+            {orders.length > 0 ? (
+              <>
+                <h5 className="text-xl text-blood mt-5">Review Your Order</h5>
+                <hr className="w-full my-4 border border-blood"></hr>
+                <div className="space-y-2">
+                  {orders.map((order) => (
+                    <div key={order.id} className="flex items-center">
+                      <img
+                        className="w-[80px] h-[80px] object-cover rounded-md"
+                        src={order.product.image}
+                        alt="product"
+                      />
+                      <div className="flex flex-col ml-4 w-full space-y-2">
+                        <div className="flex flex-row justify-between items-center">
+                          <h5 className="text-xl text-blood font-bold">
+                            {order.product.title}
+                          </h5>
+                          <span className="text-lg text-blood">
+                            Rp. {dot(order.totalPrice)}
                           </span>
-                        </h5>
-                        <button
-                          onClick={() => deleteOrder(order.id, order.toppings)}
-                        >
-                          <img src={bin} alt="" />
-                        </button>
+                        </div>
+                        <div className="flex flex-row justify-between items-center">
+                          <h5 className="text-lg text-maroon">
+                            Topping :{" "}
+                            <span className="text-blood">
+                              {order.toppings.map((topping) => (
+                                // if topping is not last, add comma
+                                <span key={topping.id}>
+                                  {topping.title}
+                                  {order.toppings.indexOf(topping) !==
+                                    order.toppings.length - 1 && ", "}
+                                </span>
+                              ))}
+                            </span>
+                          </h5>
+                          <button
+                            onClick={() =>
+                              deleteOrder(order.id, order.toppings)
+                            }
+                          >
+                            <img src={bin} alt="" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <hr className="w-full my-4 border border-blood"></hr>
-              <div className="flex-grow flex mt-6 gap-2 lg:gap-32">
-                <div className="flex flex-col w-full space-y-2">
-                  <hr className="w-full mt-4 border-0.5 border-blood"></hr>
-                  <div className="flex flex-row justify-between items-center">
-                    <h5 className="text-lg text-blood">Subtotal</h5>
-                    <span className="text-lg text-blood">Rp. {dot(total)}</span>
-                  </div>
-                  <div className="flex flex-row justify-between items-center">
-                    <h5 className="text-lg text-blood">Qty</h5>
-                    <span className="text-lg text-blood">{orders.length}</span>
-                  </div>
-                  <hr className="w-full my-4 border-0.5 border-blood"></hr>
-                  <div className="flex flex-row justify-between items-center">
-                    <h5 className="text-lg text-blood font-bold">Total</h5>
-                    <span className="text-lg text-blood font-bold">
-                      Rp. {dot(total)}
-                    </span>
-                  </div>
+                  ))}
                 </div>
-                <div className="border-2 border-blood bg-smooth text-center justify-center py-3 px-8 rounded-md whitespace-nowrap">
-                  <img className="mx-auto p-2" src={invoice} alt="" />
-                  <h5 className="text-md text-blood">Attache of Transaction</h5>
+                <hr className="w-full my-4 border border-blood"></hr>
+                <div className="flex-grow flex mt-6 gap-2 lg:gap-32">
+                  <div className="flex flex-col w-full space-y-2">
+                    <hr className="w-full mt-4 border-0.5 border-blood"></hr>
+                    <div className="flex flex-row justify-between items-center">
+                      <h5 className="text-lg text-blood">Subtotal</h5>
+                      <span className="text-lg text-blood">
+                        Rp. {dot(total)}
+                      </span>
+                    </div>
+                    <div className="flex flex-row justify-between items-center">
+                      <h5 className="text-lg text-blood">Qty</h5>
+                      <span className="text-lg text-blood">
+                        {orders.length}
+                      </span>
+                    </div>
+                    <hr className="w-full my-4 border-0.5 border-blood"></hr>
+                    <div className="flex flex-row justify-between items-center">
+                      <h5 className="text-lg text-blood font-bold">Total</h5>
+                      <span className="text-lg text-blood font-bold">
+                        Rp. {dot(total)}
+                      </span>
+                    </div>
+                  </div>
+                  <label
+                    htmlFor="image"
+                    className="cursor-pointer border-2 border-blood bg-smooth text-center justify-center p-2 rounded-md whitespace-nowrap"
+                  >
+                    {preview ? (
+                      <img
+                        className="w-[384px] h-[132px] object-cover rounded-lg"
+                        src={preview}
+                        alt="preview"
+                      />
+                    ) : (
+                      <>
+                        <img className="mx-auto p-2" src={invoice} alt="" />
+                        <h5 className="text-md text-blood">
+                          Attache of Transaction
+                        </h5>
+                      </>
+                    )}
+                  </label>
+                  <input
+                    type="file"
+                    name="image"
+                    id="image"
+                    onChange={handleChange}
+                    hidden
+                  />
                 </div>
-              </div>
-            </>
-          ) : (
-            <h5 className="text-xl text-blood mt-5">Your cart is empty</h5>
-          )}
-        </div>
-        <div className="text-center">
-          <form onSubmit={handleSubmit}>
+              </>
+            ) : (
+              <h5 className="text-xl text-blood mt-5">Your cart is empty</h5>
+            )}
+          </div>
+          <div className="text-center">
             <div
               className="flex p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800"
               role="alert"
@@ -323,9 +380,9 @@ export default function Cart() {
             >
               Pay
             </button>
-          </form>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

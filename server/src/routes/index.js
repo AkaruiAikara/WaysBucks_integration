@@ -83,7 +83,7 @@ router.delete("/products/:id", deleteProduct);
 router.get("/transactions", auth, getTransactions);
 router.get("/transactions/user/:userId", auth, getTransactionsByUserId);
 router.get("/transactions/:id", auth, getTransactionById);
-router.post("/transactions", auth, addTransaction);
+router.post("/transactions", auth, uploadFile("image"), addTransaction);
 router.patch("/transactions/:id", auth, updateTransaction);
 router.delete("/transactions/:id", auth, deleteTransaction);
 // topping

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { API, setAuthToken } from "../../../config/api";
-
-import success from "../../../assets/img/success.svg";
-import cancel from "../../../assets/img/cancel.svg";
 
 export default function Transaction() {
   document.title = "Transactions | WaysBucks";
@@ -113,7 +111,12 @@ export default function Transaction() {
                         {transaction.user.profile.postCode}
                       </td>
                       <td className="py-4 px-6 border text-md text-blue-500 whitespace-nowrap dark:text-gray-400">
-                        Rp. {dot(transaction.totalPrice)}
+                        <Link
+                          to={`${transaction.id}`}
+                          className="hover:underline"
+                        >
+                          Rp. {dot(transaction.totalPrice)}
+                        </Link>
                       </td>
                       <td className="py-4 px-6 border text-md whitespace-nowrap dark:text-gray-400">
                         {transaction.status === "pending" && (
