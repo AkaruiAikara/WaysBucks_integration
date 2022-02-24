@@ -4,10 +4,12 @@ import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import { API } from "../../config/api";
 import Alert from "../../components/Alert";
+import Preloader from "../../components/Preloader";
 
 export default function Detail() {
   const navigate = useNavigate();
   const params = useParams();
+  const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState(null);
   const [product, setProduct] = useState({
     id: "",
@@ -15,24 +17,10 @@ export default function Detail() {
     price: 0,
     image: "",
   });
+  const [state, dispatch] = useContext(UserContext);
   const [initialPrice, setInitialPrice] = useState(0);
   const [price, setPrice] = useState(initialPrice);
-  // get product data
-  useEffect(() => {
-    API.get(`/products/${params.id}`).then((res) => {
-      setProduct(res.data.data);
-      setInitialPrice(res.data.data.price);
-      setPrice(res.data.data.price);
-    });
-  }, []);
   const [toppings, setToppings] = useState([]);
-  // get all toppings
-  useEffect(() => {
-    API.get("/toppings").then((res) => {
-      setToppings(res.data.data.toppings);
-    });
-  }, []);
-  const [state, dispatch] = useContext(UserContext);
   useEffect(() => {
     if (!state.isLogin) {
       navigate("/?a=login");
@@ -40,7 +28,16 @@ export default function Detail() {
     if (state.user.isAdmin) {
       navigate("/dashboard/index");
     }
-  });
+    API.get(`/products/${params.id}`).then((res) => {
+      setProduct(res.data.data);
+      setInitialPrice(res.data.data.price);
+      setPrice(res.data.data.price);
+    });
+    API.get("/toppings").then((res) => {
+      setToppings(res.data.data.toppings);
+    });
+    setLoading(false);
+  }, []);
   const [selectedToppings, setSelectedToppings] = useState([]);
   // calculate price
   useEffect(() => {
@@ -127,7 +124,9 @@ export default function Detail() {
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <div className="lg:mx-20">
       <div className="flex flex-col md:flex-row gap-24 justify-around">
         <img

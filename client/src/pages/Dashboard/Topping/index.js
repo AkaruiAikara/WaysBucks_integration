@@ -3,14 +3,17 @@ import { Link } from "react-router-dom";
 import { API } from "../../../config/api";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Preloader from "../../../components/Preloader";
 
 export default function Topping() {
   document.title = "Toppings | WaysBucks";
+  const [loading, setLoading] = useState(true);
   const [toppings, setToppings] = useState([]);
   // get all toppings
   useEffect(() => {
     API.get("/toppings").then((res) => {
       setToppings(res.data.data.toppings);
+      setLoading(false);
     });
   }, []);
   const MySwal = withReactContent(Swal);
@@ -34,7 +37,9 @@ export default function Topping() {
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <>
       <div className="flex justify-between">
         <h1 className="text-3xl text-blood font-bold my-12">Toppings</h1>

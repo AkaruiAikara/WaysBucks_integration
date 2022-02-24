@@ -6,6 +6,7 @@ import { API, setAuthToken } from "../../config/api";
 import Alert from "../../components/Alert";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Preloader from "../../components/Preloader";
 
 import avatar from "../../assets/img/avatar.jpg";
 import logo from "../../assets/img/logo-small.png";
@@ -14,6 +15,7 @@ export default function Profile() {
   document.title = "Profile | WaysBucks";
   const MySwal = withReactContent(Swal);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
   const [state, dispatch] = useContext(UserContext);
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function Profile() {
       API.get(`/transactions/user/${state.user.id}`).then((res) => {
         setTransactions(res.data.data.transactions);
       });
+      setLoading(false);
     }
   }, []);
   // Get user data and set it to state
@@ -162,7 +165,9 @@ export default function Profile() {
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <div className="mx-10 lg:mx-20">
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1">

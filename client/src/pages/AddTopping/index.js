@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../../config/api";
 import Alert from "../../components/Alert";
+import Preloader from "../../components/Preloader";
 
 import toping from "../../assets/img/toping-big.png";
 import attachment from "../../assets/img/attachment.svg";
@@ -9,6 +10,7 @@ import attachment from "../../assets/img/attachment.svg";
 export default function AddTopping() {
   const params = useParams();
   const [alert, setAlert] = useState(null);
+  const [loading, setLoading] = useState(true);
   // store data with useState as form
   const [form, setForm] = useState({
     title: null,
@@ -23,6 +25,7 @@ export default function AddTopping() {
         setPreview(res.data.data.image);
       });
     }
+    setLoading(false);
   }, []);
   const { title, price, image } = form;
   const [preview, setPreview] = useState(image);
@@ -96,7 +99,9 @@ export default function AddTopping() {
     }
   };
 
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <>
       <div className="flex flex-col lg:flex-row gap-36">
         <div className="flex-grow">

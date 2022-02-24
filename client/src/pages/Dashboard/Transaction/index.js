@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API, setAuthToken } from "../../../config/api";
+import Preloader from "../../../components/Preloader";
 
 export default function Transaction() {
   document.title = "Transactions | WaysBucks";
+  const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
   // get all transactions
   useEffect(() => {
@@ -13,6 +15,7 @@ export default function Transaction() {
     if (localStorage.getItem("token")) {
       setAuthToken(localStorage.getItem("token"));
     }
+    setLoading(false);
   }, []);
   // update transaction status to failed or success
   const updateTransaction = (id, status) => {
@@ -36,7 +39,9 @@ export default function Transaction() {
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <>
       <h1 className="text-3xl text-blood font-bold my-12">
         Income Transaction

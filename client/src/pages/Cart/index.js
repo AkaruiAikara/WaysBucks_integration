@@ -5,6 +5,7 @@ import { UserContext } from "../../context/UserContext";
 import { API, setAuthToken } from "../../config/api";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Preloader from "../../components/Preloader";
 
 import bin from "../../assets/img/bin.svg";
 import invoice from "../../assets/img/invoice.svg";
@@ -32,6 +33,7 @@ export default function Cart() {
   const MySwal = withReactContent(Swal);
   const [state, dispatch] = useContext(UserContext);
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
   // get user data from state
   const user = state.user;
   // form
@@ -58,6 +60,7 @@ export default function Cart() {
           }
         });
         setTotal(total);
+        setLoading(false);
       });
     }
   }, []);
@@ -72,6 +75,11 @@ export default function Cart() {
   // delete order with toast notification without confirmation
   const deleteOrder = async (id, toppings) => {
     try {
+      orders.map((order) => {
+        if (order.id === id) {
+          setTotal(total - order.totalPrice);
+        }
+      });
       // delete order toppings first
       if (toppings.length > 0) {
         await API.delete(`/order-toppings/${id}`);
@@ -87,7 +95,6 @@ export default function Cart() {
         type: "REMOVE_ORDER",
         payload: id,
       });
-      setTotal(total - res.data.data.totalPrice);
       if (state.user.id) {
         API.get(`/users/${state.user.id}`).then((res) => {
           dispatch({
@@ -184,7 +191,9 @@ export default function Cart() {
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <div className="mx-5 lg:mx-20">
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col lg:flex-row gap-24 justify-center">

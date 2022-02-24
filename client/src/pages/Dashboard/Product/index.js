@@ -3,14 +3,17 @@ import { Link } from "react-router-dom";
 import { API } from "../../../config/api";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Preloader from "../../../components/Preloader";
 
 export default function Product() {
   document.title = "Products | WaysBucks";
+  const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   // get all products
   useEffect(() => {
     API.get("/products").then((res) => {
       setProducts(res.data.data.products);
+      setLoading(false);
     });
   }, []);
   const MySwal = withReactContent(Swal);
@@ -34,7 +37,9 @@ export default function Product() {
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <>
       <div className="flex justify-between">
         <h1 className="text-3xl text-blood font-bold my-12">Products</h1>

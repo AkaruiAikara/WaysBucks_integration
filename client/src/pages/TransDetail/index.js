@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../../config/api";
+import Preloader from "../../components/Preloader";
 
 import invoice from "../../assets/img/invoice.svg";
 
 export default function TransDetail() {
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
   const [transaction, setTransaction] = useState({});
   // get transaction by id
   useEffect(() => {
     API.get(`/transactions/${id}`).then((res) => {
       setTransaction(res.data.data.transaction);
     });
+    setLoading(false);
   }, []);
-  console.log(transaction);
   // function that separate every 3 digits with dot
   const dot = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

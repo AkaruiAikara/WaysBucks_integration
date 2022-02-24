@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { API } from "../../../config/api";
+import Preloader from "../../../components/Preloader";
 
 export default function DashContent() {
   document.title = "Dashboard | WaysBucks";
+  const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState({
     users: 0,
     products: 0,
@@ -24,8 +26,11 @@ export default function DashContent() {
   };
   useEffect(() => {
     getTotal();
+    setLoading(false);
   }, []);
-  return (
+  return loading ? (
+    <Preloader />
+  ) : (
     <>
       <div className="grid grid-cols-2 gap-12">
         <div className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-xl text-sm py-24 text-center">
