@@ -12,8 +12,17 @@ export default function ChatBox() {
   const [contact, setContact] = useState(null);
   const [contacts, setContacts] = useState([]);
   useEffect(() => {
-    socket = io("http://localhost:5000");
-    loadContacts();
+    if (state.user) {
+      socket = io("http://localhost:5000", {
+        auth: {
+          token: state.user.token,
+        },
+      });
+      loadContacts();
+      socket.on("connect_error", (err) => {
+        console.error(err.message);
+      });
+    }
     return () => {
       socket.disconnect();
       setContacts([]);
@@ -49,6 +58,7 @@ export default function ChatBox() {
           {contacts.map((contact) =>
             contact.id === state.user.id ? null : (
               <div
+                key={contact.id}
                 onClick={() => setContact(contact)}
                 className="cursor-pointer flex flex-row gap-2 p-2 mx-2 my-1 hover:bg-red-200 rounded-xl"
               >
