@@ -55,21 +55,23 @@ export default function ChatBox() {
     isOpen ? (
       <div className="sticky left-[88%] bottom-0 flex flex-row shadow-2xl shadow-red-600 bg-white w-[768px] h-[512px] rounded-lg">
         <div className="flex-shrink flex flex-col h-full gap-2 rounded-tl-lg rounded-bl-lg bg-red-100 w-[256px] py-3">
-          {contacts.map((contact) =>
-            contact.id === state.user.id ? null : (
+          {contacts.map((item) =>
+            item.id === state.user.id ? null : (
               <div
-                key={contact.id}
-                onClick={() => setContact(contact)}
-                className="cursor-pointer flex flex-row gap-2 p-2 mx-2 my-1 hover:bg-red-200 rounded-xl"
+                key={item.id}
+                onClick={() => setContact(item)}
+                className={`${
+                  contact && contact.id === item.id ? "active" : ""
+                } cursor-pointer flex flex-row gap-2 p-2 mx-2 my-1 hover:bg-red-200 rounded-xl`}
               >
                 <img
                   className="w-[48px] h-[48px] object-cover rounded-full"
-                  src={contact.image || avatar}
+                  src={item.image || avatar}
                   alt="avatar"
                 />
                 <div>
-                  <p className="text-md font-bold">{contact.fullName}</p>
-                  <p className="text-sm text-gray-500">{contact.message}</p>
+                  <p className="text-md font-bold">{item.fullName}</p>
+                  <p className="text-sm text-gray-500">{item.message}</p>
                 </div>
               </div>
             )
