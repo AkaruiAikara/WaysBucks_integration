@@ -19,8 +19,8 @@ export default function Home() {
           type: "SET_USER",
           payload: res.data.data.user,
         });
-        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
