@@ -51,9 +51,10 @@ export default function Sidebar() {
             </span>
           </div>
           <p className="mb-3 text-sm text-red-900 dark:text-red-400">
-            WayBucks Dashboard Panel is currently in Alpha, and is not ready for
-            use. Please do not use it for production. This panel is for testing
-            purposes only. If you have any questions, please contact us at 911
+            WaysBucks Dashboard Panel is currently in Alpha, and is not ready
+            for use. Please do not use it for production. This panel is for
+            testing purposes only. If you have any questions, please contact us
+            at 911
           </p>
         </div>
       </div>

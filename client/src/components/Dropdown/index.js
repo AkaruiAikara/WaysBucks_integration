@@ -22,6 +22,23 @@ export default function Dropdown({ setIsOpen, onClickOutside }) {
       className="absolute right-0 z-30 w-44 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
     >
       <ul>
+        {state.user && (
+          <>
+            <li>
+              <div className="block py-4 px-4 text-md text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold">{state.user.fullName}</h4>
+                  <span className="text-xs font-normal text-gray-400">
+                    {state.user.email}
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <hr />
+            </li>
+          </>
+        )}
         {state.user.isAdmin ? (
           <>
             <li>

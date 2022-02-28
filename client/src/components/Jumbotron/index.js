@@ -35,7 +35,7 @@ export default function Jumbotron() {
           alt="slice"
         />
         <div className="space-y-12 lg:pr-72">
-          <h1 className="text-6xl font-black font-noto">WAYBUCKS</h1>
+          <h1 className="text-6xl font-black font-noto">WAYSBUCKS</h1>
           <h3 className="text-3xl">
             Things are changing, but we’re still here for you
           </h3>
